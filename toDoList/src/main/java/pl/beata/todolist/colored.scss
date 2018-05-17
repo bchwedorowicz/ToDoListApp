@@ -1,0 +1,6 @@
+@import "../../VAADIN.addons/hybrid-menu/hybrid-menu.scss";
+
+@mixin colored {
+	@include hybrid-menu;
+
+}
