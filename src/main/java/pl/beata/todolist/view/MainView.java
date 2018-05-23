@@ -55,7 +55,6 @@ public class MainView extends AbstractView {
 	@Override
 	protected void renderMergedOutputModel(Map<String, Object> arg0, HttpServletRequest arg1, HttpServletResponse arg2)
 			throws Exception {
-		// TODO Auto-generated method stub
 
 	}
 }

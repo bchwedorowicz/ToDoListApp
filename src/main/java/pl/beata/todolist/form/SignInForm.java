@@ -14,6 +14,8 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
+import pl.beata.todolist.view.MainView;
+
 @SpringComponent
 @UIScope
 public class SignInForm extends FormLayout {
@@ -24,14 +26,17 @@ public class SignInForm extends FormLayout {
 	private Button registrationBtn = new Button("Register");
 	private Window popup;
 	private RegistrationForm registrationForm;
+	private MainView mainView;
 
 	@Autowired
-	public SignInForm(RegistrationForm registrationForm) {
+	public SignInForm(RegistrationForm registrationForm, MainView mainView) {
+		this.mainView = mainView;
 		this.registrationForm = registrationForm;
 		addComponents(email, password, loginBtn, createRegistrationLayout());
 		openRegistrationWindowListener();
 		closeRegistrationWindowListener();
 		setEmailPasswordValueListener();
+		openMainViewListener();
 	}
 
 	private HorizontalLayout createRegistrationLayout() {
@@ -52,7 +57,7 @@ public class SignInForm extends FormLayout {
 			UI.getCurrent().removeWindow(popup);
 		});
 	}
-	
+
 	private void setEmailPasswordValueListener() {
 		registrationForm.getSaveBtn().addClickListener(e -> {
 			String emailValue = registrationForm.getEmailValue();
@@ -68,5 +73,11 @@ public class SignInForm extends FormLayout {
 		popup.setModal(true);
 		UI.getCurrent().addWindow(popup);
 		return popup;
+	}
+	
+	private void openMainViewListener() {
+		loginBtn.addClickListener(e -> {
+			mainView.createAppView();
+		});
 	}
 }
