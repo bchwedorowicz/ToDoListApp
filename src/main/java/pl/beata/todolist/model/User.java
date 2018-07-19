@@ -1,8 +1,15 @@
 package pl.beata.todolist.model;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 @Entity
 public class User {
@@ -15,6 +22,17 @@ public class User {
 	@Id
 	@GeneratedValue
 	private int id;
+
+	@ManyToMany
+	@JoinTable(name = "USER_CONTACTS", joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "CONTACT_ID", referencedColumnName = "ID"))
+	private Set<User> contacts;
+
+	@OneToMany(mappedBy = "owner")
+	private List<Note> notes;
+
+	public Set<User> getContacts() {
+		return contacts;
+	}
 
 	public int getId() {
 		return id;
@@ -63,4 +81,28 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public List<Note> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(List<Note> notes) {
+		this.notes = notes;
+	}
+
+	public void setContacts(Set<User> contacts) {
+		this.contacts = contacts;
+	}
+	
+	public Note getNote(String noteName) {
+		Note currentNote = null;
+		for (Note note : notes) {
+			if (note.getTitle().equals(noteName)) {
+				currentNote = note;
+			}
+		}
+		return currentNote;
+	}
+	
+	
 }

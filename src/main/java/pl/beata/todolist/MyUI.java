@@ -1,6 +1,8 @@
 package pl.beata.todolist;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.spring.events.EventBus.UIEventBus;
+import org.vaadin.spring.events.EventBusListener;
 
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
@@ -11,7 +13,8 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.UI;
 
-import pl.beata.todolist.form.SignInForm;
+import pl.beata.todolist.event.UserEvent;
+import pl.beata.todolist.form.LogInForm;
 import pl.beata.todolist.service.UserService;
 import pl.beata.todolist.view.MainView;
 
@@ -26,17 +29,32 @@ public class MyUI extends UI {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private SignInForm signInForm;
+	private LogInForm logInForm;
 	@Autowired
 	private MainView mainView;
+	@Autowired
+	private UIEventBus eventBus;
 
+	@Override
 	public void init(VaadinRequest request) {
 
 		if (userService.isUserLoggedIn()) {
-			setContent(mainView.createAppView());
+			setContent(mainView.getAppLayoutComponent());
 		} else {
-			setContent(signInForm);
-		}
+			setContent(logInForm);
+		}		
+		subscribeUserLoginevent();
+	}
+	
+	private void subscribeUserLoginevent() {
+		eventBus.subscribe(new EventBusListener<UserEvent>() {
+
+			@Override
+			public void onEvent(org.vaadin.spring.events.Event<UserEvent> event) {
+				setContent(mainView.getAppLayoutComponent());
+			}
+			
+		});
 	}
 
 }
