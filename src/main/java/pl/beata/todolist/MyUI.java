@@ -13,6 +13,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.UI;
 
+import pl.beata.todolist.event.LogOutEvent;
 import pl.beata.todolist.event.UserEvent;
 import pl.beata.todolist.form.LogInForm;
 import pl.beata.todolist.service.UserService;
@@ -43,15 +44,28 @@ public class MyUI extends UI {
 		} else {
 			setContent(logInForm);
 		}		
-		subscribeUserLoginevent();
+		subscribeUserLoginEvent();
+		subscribeLogOutBtnEvent();
 	}
 	
-	private void subscribeUserLoginevent() {
+	private void subscribeUserLoginEvent() {
 		eventBus.subscribe(new EventBusListener<UserEvent>() {
 
 			@Override
 			public void onEvent(org.vaadin.spring.events.Event<UserEvent> event) {
 				setContent(mainView.getAppLayoutComponent());
+				MyUI.getCurrent().getNavigator().navigateTo("myNotes");
+			}
+			
+		});
+	}
+	
+	private void subscribeLogOutBtnEvent() {
+		eventBus.subscribe(new EventBusListener<LogOutEvent>() {
+
+			@Override
+			public void onEvent(org.vaadin.spring.events.Event<LogOutEvent> event) {
+				setContent(logInForm);
 			}
 			
 		});

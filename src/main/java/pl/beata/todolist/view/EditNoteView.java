@@ -2,8 +2,11 @@ package pl.beata.todolist.view;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.vaadin.spring.events.EventBus.UIEventBus;
 
 import com.github.appreciated.app.layout.annotations.MenuCaption;
 import com.github.appreciated.app.layout.annotations.MenuIcon;
@@ -14,17 +17,23 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
+import pl.beata.todolist.MyUI;
+import pl.beata.todolist.components.SharedContactsComponent;
 import pl.beata.todolist.components.TaskComponent;
 import pl.beata.todolist.dao.NoteDao;
 import pl.beata.todolist.dao.TaskDao;
+import pl.beata.todolist.event.CloseDeleteWindowEvent;
+import pl.beata.todolist.event.DeleteNoteEvent;
 import pl.beata.todolist.model.Note;
 import pl.beata.todolist.model.Task;
+import pl.beata.todolist.model.User;
 import pl.beata.todolist.service.UserService;
 
 @SpringView(name = "note")
@@ -40,26 +49,42 @@ public class EditNoteView extends Panel implements View {
 	private VerticalLayout tasksLayout = new VerticalLayout();
 	private Button addTaskBtn = new Button("Add Task", VaadinIcons.PLUS_CIRCLE_O);
 	private Button saveBtn = new Button("Save");
+	private Button deleteBtn = new Button("Delete");
 	private Note note;
 	private UserService userService;
 	private NoteDao noteDao;
 	private TaskDao taskDao;
+	private DeleteNoteView deleteNoteView;
+	private UIEventBus eventBus;
+	private SharedContactsComponent sharedContacts;
 
 	@Autowired
-	public EditNoteView(UserService userService, NoteDao noteDao, TaskDao taskDao) {
+	public EditNoteView(UserService userService, NoteDao noteDao, TaskDao taskDao, DeleteNoteView deleteNoteView,
+			UIEventBus eventBus, SharedContactsComponent sharedContacts) {
 		this.userService = userService;
 		this.noteDao = noteDao;
 		this.taskDao = taskDao;
+		this.deleteNoteView = deleteNoteView;
+		this.eventBus = eventBus;
+		this.sharedContacts = sharedContacts;
+		HorizontalLayout generalLayout = new HorizontalLayout();
 		VerticalLayout vLayout = new VerticalLayout();
-		vLayout.addComponents(owner, noteName, tasksLayout, addTaskBtn, saveBtn);
-		setContent(vLayout);
+		HorizontalLayout hLayout = new HorizontalLayout(saveBtn, deleteBtn);
+		vLayout.addComponents(owner, noteName, tasksLayout, addTaskBtn, hLayout);
+		generalLayout.addComponents(vLayout, sharedContacts);
+		setContent(generalLayout);
 		createAddTaskBtnListener();
 		createSaveBtnListener();
+		openDeleteNoteWindowListener();
+		createYesBtnListener();
+		createNoBtnListener();
 	}
 
 	@Override
+	@Transactional
 	public void enter(ViewChangeListener.ViewChangeEvent event) {
 		String params = event.getParameters();
+		sharedContacts.setSharedContacts(userService.getCurrentUser().getContacts());
 		if (params == null || params.equals("")) {
 			note = new Note();
 		} else {
@@ -70,6 +95,7 @@ public class EditNoteView extends Panel implements View {
 			for (Task task : list) {
 				addTask(task);
 			}
+			sharedContacts.selectContacts(note.getCoOwners());
 		}
 	}
 
@@ -100,19 +126,49 @@ public class EditNoteView extends Panel implements View {
 			for (TaskComponent taskComponent : tasksList) {
 				taskComponent.setValuesFromComponents();
 			}
+			saveNoteToSharedUsers();
 			noteDao.update(note);
 			Notification.show("Note saved");
 		});
 	}
 
 	private void createDeleteTaskBtnListener(TaskComponent taskComponent) {
-			taskComponent.getDeleteTaskBtn().addClickListener(event -> {			
-				Task task = taskComponent.getTask();
-				note.getTasks().remove(task);
-				noteDao.update(note);
-				tasksLayout.removeComponent(taskComponent);
-				Notification.show("Task deleted");
-			});
+		taskComponent.getDeleteTaskBtn().addClickListener(event -> {
+			Task task = taskComponent.getTask();
+			note.getTasks().remove(task);
+			noteDao.update(note);
+			tasksLayout.removeComponent(taskComponent);
+			Notification.show("Task deleted");
+		});
+	}
+
+	private void openDeleteNoteWindowListener() {
+		deleteBtn.addClickListener(event -> {
+			MyUI.getCurrent().addWindow(deleteNoteView);
+			deleteNoteView.center();
+			deleteNoteView.setModal(true);
+			deleteNoteView.setWidth(13, UNITS_CM);
+		});
+	}
+
+	
+	private void createYesBtnListener() {
+		deleteNoteView.getYesBtn().addClickListener(event -> {
+			DeleteNoteEvent deleteNoteEvent = new DeleteNoteEvent(note);
+			eventBus.publish(this, deleteNoteEvent);
+		});
+	}
+	
+	private void createNoBtnListener() {
+		deleteNoteView.getNoBtn().addClickListener(event -> {
+			CloseDeleteWindowEvent closedeleteWindowEvent = new CloseDeleteWindowEvent();
+			eventBus.publish(this, closedeleteWindowEvent);
+		});
+	}
+	
+	private void saveNoteToSharedUsers() {
+		Set<User> sharedUsers = sharedContacts.getSharedUsers();
+		note.setCoOwners(sharedUsers);
 	}
 
 }

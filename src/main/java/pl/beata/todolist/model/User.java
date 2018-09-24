@@ -8,12 +8,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+
+import pl.beata.todolist.uploader.PhotoUploader;
 
 @Entity
 public class User {
 
+	@Lob
 	private byte[] photo;
 	private String fName;
 	private String lName;
@@ -29,6 +33,9 @@ public class User {
 
 	@OneToMany(mappedBy = "owner")
 	private List<Note> notes;
+	
+	@ManyToMany(mappedBy = "coOwners")
+	private List<Note> sharedNotes;
 
 	public Set<User> getContacts() {
 		return contacts;
@@ -102,6 +109,10 @@ public class User {
 			}
 		}
 		return currentNote;
+	}
+	
+	public List<Note> getSharedNotes() {
+		return sharedNotes;
 	}
 	
 	

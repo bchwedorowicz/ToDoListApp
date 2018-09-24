@@ -12,23 +12,24 @@ import com.vaadin.spring.annotation.SpringView;
 import pl.beata.todolist.model.Note;
 import pl.beata.todolist.service.UserService;
 
-@SpringView(name = "myNotes")
-@MenuCaption("My Notes")
-@MenuIcon(VaadinIcons.CLIPBOARD_TEXT)
-public class MyNotesView extends AbstractNotesView {
-
+@SpringView(name = "othersNotes")
+@MenuCaption("Others Notes")
+@MenuIcon(VaadinIcons.CLIPBOARD_USER)
+public class OthersNotesView extends AbstractNotesView {
+	
 	private UserService userService;
 
 	@Autowired
-	public MyNotesView(UserService userService) {
+	public OthersNotesView(UserService userService) {
 		super(userService);
 		this.userService = userService;
 	}
 
 	@Override
 	protected List<Note> getNotes() {
-		return userService.getCurrentUser().getNotes();
+		return userService.getCurrentUser().getSharedNotes();
 	}
-
+	
+	
 
 }

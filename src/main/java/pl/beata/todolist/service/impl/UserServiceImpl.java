@@ -44,6 +44,11 @@ public class UserServiceImpl implements UserService {
 		int userId = user.getId();
 		sessionService.setCurrentUserId(userId);
 	}
+	
+	@Override
+	public void logout() {
+		sessionService.setCurrentUserId(null);
+	}
 
 	@Override
 	public void register(User user) throws ValidationException {

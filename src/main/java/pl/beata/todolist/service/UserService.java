@@ -13,5 +13,6 @@ public interface UserService {
 	User getCurrentUser();
 	void setContact(String contactEmail) throws ValidationException;
 	void deleteContact(Set<String> contactsEmails);
+	void logout();
 
 }

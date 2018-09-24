@@ -1,9 +1,13 @@
 package pl.beata.todolist.dao;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import pl.beata.todolist.model.User;
 
 public abstract class AbstractDao<T> implements Dao<T> {
 
