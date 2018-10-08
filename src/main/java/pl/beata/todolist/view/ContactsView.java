@@ -1,16 +1,7 @@
 package pl.beata.todolist.view;
 
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -62,6 +53,7 @@ public class ContactsView extends VerticalLayout implements View {
 		popup.center();
 		popup.setModal(true);
 		openNewContactWindowListener();
+		usersGrid.setSizeFull();
 		addComponents(hLayout, usersGrid);
 		createUsersGrid();
 		createAddContactBtnListener();
@@ -73,30 +65,12 @@ public class ContactsView extends VerticalLayout implements View {
 	}
 
 	private void createUsersGrid() {
-		ValueProvider<User, Resource> function = (User f) -> new Base64StreamResource(
-				"data:image/png;base64," + Base64.getEncoder().encodeToString(setImageSize(f.getPhoto(), 30, 30)));
+		ValueProvider<User, Resource> function = (User f) -> new Base64StreamResource(f.getPhoto(), 30, 30);
 		usersGrid.addColumn(function).setCaption("Photo").setRenderer(new ImageRenderer<>());
 		usersGrid.addColumn(User::getfName).setCaption("First Name");
 		usersGrid.addColumn(User::getlName).setCaption("Last Name");
 		usersGrid.addColumn(User::getEmail).setCaption("Email");
 		usersGrid.setSelectionMode(SelectionMode.MULTI);
-	}
-
-	private byte[] setImageSize(byte[] fileData, int width, int height) {
-		ByteArrayInputStream in = new ByteArrayInputStream(fileData);
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		try {
-			BufferedImage img = ImageIO.read(in);
-			Image scaledImage = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-			BufferedImage imageBuff = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-			imageBuff.getGraphics().drawImage(scaledImage, 0, 0, new Color(0, 0, 0), null);
-
-			ImageIO.write(imageBuff, "jpg", buffer);
-
-		} catch (IOException e) {
-			e.getMessage();
-		}
-		return buffer.toByteArray();
 	}
 
 	@Override

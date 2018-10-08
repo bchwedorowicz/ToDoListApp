@@ -10,6 +10,8 @@ import org.vaadin.spring.events.EventBus.UIEventBus;
 
 import com.github.appreciated.app.layout.annotations.MenuCaption;
 import com.github.appreciated.app.layout.annotations.MenuIcon;
+import com.github.appreciated.app.layout.builder.entities.DefaultNotification;
+import com.github.appreciated.app.layout.builder.entities.DefaultNotificationHolder;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -28,10 +30,12 @@ import pl.beata.todolist.MyUI;
 import pl.beata.todolist.components.SharedContactsComponent;
 import pl.beata.todolist.components.TaskComponent;
 import pl.beata.todolist.dao.NoteDao;
+import pl.beata.todolist.dao.NotificationDao;
 import pl.beata.todolist.dao.TaskDao;
 import pl.beata.todolist.event.CloseDeleteWindowEvent;
 import pl.beata.todolist.event.DeleteNoteEvent;
 import pl.beata.todolist.model.Note;
+import pl.beata.todolist.model.BellNotification;
 import pl.beata.todolist.model.Task;
 import pl.beata.todolist.model.User;
 import pl.beata.todolist.service.UserService;
@@ -54,19 +58,21 @@ public class EditNoteView extends Panel implements View {
 	private UserService userService;
 	private NoteDao noteDao;
 	private TaskDao taskDao;
+	private NotificationDao notificationDao;
 	private DeleteNoteView deleteNoteView;
 	private UIEventBus eventBus;
 	private SharedContactsComponent sharedContacts;
 
 	@Autowired
 	public EditNoteView(UserService userService, NoteDao noteDao, TaskDao taskDao, DeleteNoteView deleteNoteView,
-			UIEventBus eventBus, SharedContactsComponent sharedContacts) {
+			UIEventBus eventBus, SharedContactsComponent sharedContacts, NotificationDao notificationDao) {
 		this.userService = userService;
 		this.noteDao = noteDao;
 		this.taskDao = taskDao;
 		this.deleteNoteView = deleteNoteView;
 		this.eventBus = eventBus;
 		this.sharedContacts = sharedContacts;
+		this.notificationDao = notificationDao;
 		HorizontalLayout generalLayout = new HorizontalLayout();
 		VerticalLayout vLayout = new VerticalLayout();
 		HorizontalLayout hLayout = new HorizontalLayout(saveBtn, deleteBtn);
@@ -151,24 +157,33 @@ public class EditNoteView extends Panel implements View {
 		});
 	}
 
-	
 	private void createYesBtnListener() {
 		deleteNoteView.getYesBtn().addClickListener(event -> {
 			DeleteNoteEvent deleteNoteEvent = new DeleteNoteEvent(note);
 			eventBus.publish(this, deleteNoteEvent);
 		});
 	}
-	
+
 	private void createNoBtnListener() {
 		deleteNoteView.getNoBtn().addClickListener(event -> {
 			CloseDeleteWindowEvent closedeleteWindowEvent = new CloseDeleteWindowEvent();
 			eventBus.publish(this, closedeleteWindowEvent);
 		});
 	}
-	
+
 	private void saveNoteToSharedUsers() {
 		Set<User> sharedUsers = sharedContacts.getSharedUsers();
 		note.setCoOwners(sharedUsers);
+		
+			BellNotification notification = new BellNotification();
+			notification.setTitle("New Note");
+			notification.setDescription("New note from " + userService.getCurrentUser().getfName() + userService.getCurrentUser().getlName());
+			
+			for (User user: sharedUsers) {
+				notification.setUser(user);	
+			}
+			
+			notificationDao.create(notification);
+			
 	}
-
 }

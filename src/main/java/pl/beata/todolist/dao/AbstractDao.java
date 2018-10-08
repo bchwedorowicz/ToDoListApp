@@ -41,5 +41,5 @@ public abstract class AbstractDao<T> implements Dao<T> {
 	public void delete(T entity) {
 		em.remove(em.contains(entity) ? entity : em.merge(entity));
 	}
-
+	
 }

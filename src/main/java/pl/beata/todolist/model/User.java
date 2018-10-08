@@ -12,7 +12,9 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import pl.beata.todolist.uploader.PhotoUploader;
+import com.github.appreciated.app.layout.builder.entities.DefaultNotification;
+import com.github.appreciated.app.layout.builder.entities.DefaultNotificationHolder;
+import com.github.appreciated.app.layout.builder.entities.NotificationHolder;
 
 @Entity
 public class User {
@@ -23,6 +25,7 @@ public class User {
 	private String lName;
 	private String email;
 	private String password;
+
 	@Id
 	@GeneratedValue
 	private int id;
@@ -36,6 +39,9 @@ public class User {
 	
 	@ManyToMany(mappedBy = "coOwners")
 	private List<Note> sharedNotes;
+	
+	@OneToMany(mappedBy = "user")
+	private List<BellNotification> notifications;
 
 	public Set<User> getContacts() {
 		return contacts;
@@ -113,6 +119,10 @@ public class User {
 	
 	public List<Note> getSharedNotes() {
 		return sharedNotes;
+	}
+	
+	public List<BellNotification> getNotifications() {
+		return notifications;
 	}
 	
 	
