@@ -14,7 +14,7 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.UI;
 
 import pl.beata.todolist.event.LogOutEvent;
-import pl.beata.todolist.event.UserEvent;
+import pl.beata.todolist.event.LogInEvent;
 import pl.beata.todolist.form.LogInForm;
 import pl.beata.todolist.service.UserService;
 import pl.beata.todolist.view.MainView;
@@ -49,15 +49,16 @@ public class MyUI extends UI {
 	}
 	
 	private void subscribeUserLoginEvent() {
-		eventBus.subscribe(new EventBusListener<UserEvent>() {
+		EventBusListener<LogInEvent> listener = new EventBusListener<LogInEvent>() {
 
 			@Override
-			public void onEvent(org.vaadin.spring.events.Event<UserEvent> event) {
+			public void onEvent(org.vaadin.spring.events.Event<LogInEvent> event) {
 				setContent(mainView.getAppLayoutComponent());
 				MyUI.getCurrent().getNavigator().navigateTo("myNotes");
 			}
 			
-		});
+		};
+		eventBus.subscribe(listener);
 	}
 	
 	private void subscribeLogOutBtnEvent() {

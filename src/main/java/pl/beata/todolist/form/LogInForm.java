@@ -17,7 +17,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import pl.beata.todolist.event.UserEvent;
+import pl.beata.todolist.event.LogInEvent;
 import pl.beata.todolist.event.UserRegisteredEvent;
 import pl.beata.todolist.model.User;
 import pl.beata.todolist.service.UserService;
@@ -73,7 +73,7 @@ public class LogInForm extends VerticalLayout {
 	private void addLoginButtonListener() {
 		loginBtn.addClickListener(e -> {
 			if (userService.login(email.getValue(), password.getValue())) {
-				UserEvent loggerEvent = new UserEvent();
+				LogInEvent loggerEvent = new LogInEvent();
 				eventBus.publish(this, loggerEvent);
 			} else {
 				Notification.show("Wrong email or password");

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.vaadin.spring.events.EventBusListener;
+import org.vaadin.spring.events.Event;
 import org.vaadin.spring.events.EventBus.UIEventBus;
 
 import com.github.appreciated.app.layout.AppLayout;
@@ -27,10 +29,12 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.VerticalLayout;
 
 import pl.beata.todolist.dao.NotificationDao;
 import pl.beata.todolist.dao.UserDao;
 import pl.beata.todolist.event.LogOutEvent;
+import pl.beata.todolist.event.LogInEvent;
 import pl.beata.todolist.model.BellNotification;
 import pl.beata.todolist.notification.BellDefaultNotification;
 import pl.beata.todolist.service.UserService;
@@ -43,12 +47,13 @@ public class MainView {
 
 	private SpringViewProvider viewProvider;
 	private UserService userSerivce;
-	private MenuHeader menuHeader;
+	private VerticalLayout menuHeaderLayout;
 	private AppLayoutComponent appLayoutComponent;
 	private Button logOutBtn = new Button("Log out");
 	private UIEventBus eventBus;
 	private UserDao userDao;
 	private NotificationDao notificationDao;
+	private DefaultNotificationHolder notifications;
 
 	@Autowired
 	public MainView(SpringViewProvider viewProvider, UserService userSerivce, UIEventBus eventBus,
@@ -59,6 +64,8 @@ public class MainView {
 		this.notificationDao = notificationDao;
 		appLayoutComponent = createAppView();
 		addLogOutBtnListener();
+		subscribeUserLoginEvent();
+		fillCurrentUserData();
 	}
 
 	public AppLayoutComponent getAppLayoutComponent() {
@@ -67,17 +74,7 @@ public class MainView {
 
 	private AppLayoutComponent createAppView() {
 
-		DefaultNotificationHolder notifications = new DefaultNotificationHolder();
-
-		for (BellNotification notification : userSerivce.getCurrentUser().getNotifications()) {
-			String title = notification.getTitle();
-			String description = notification.getDescription();
-			int id = notification.getId();
-
-			BellDefaultNotification defaultNotification = new BellDefaultNotification(title, description, id);
-
-			notifications.addNotification(defaultNotification);
-		}
+		notifications = new DefaultNotificationHolder();
 
 		notifications.addStatusListener(new NotificationListener() {
 
@@ -101,8 +98,8 @@ public class MainView {
 
 		AppBarNotificationButton bell = new AppBarNotificationButton(notifications, true);
 
-		menuHeader = new MenuHeader("Hello " + userSerivce.getCurrentUser().getfName() + "!",
-				new ThemeResource("logo.png"));
+		menuHeaderLayout = new VerticalLayout();
+		
 		AppLayoutComponent layout = AppLayout.getCDIBuilder(Behaviour.LEFT_RESPONSIVE_HYBRID)
 				.withViewProvider(() -> viewProvider)
 				.withNavigationElementInfoProducer(new DefaultSpringNavigationElementInfoProducer())
@@ -111,7 +108,7 @@ public class MainView {
 					/* Do something with it */})
 				.withNavigatorConsumer(navigator -> {
 					/* Do something with it */})
-				.add(menuHeader, Section.HEADER).add("Add New Note", VaadinIcons.PLUS_CIRCLE_O, EditNoteView.class)
+				.add(menuHeaderLayout, Section.HEADER).add("Add New Note", VaadinIcons.PLUS_CIRCLE_O, EditNoteView.class)
 				.add("My Profile", VaadinIcons.USER, MyProfileView.class)
 				.add(SubmenuBuilder.get("Notes", VaadinIcons.NOTEBOOK)
 						.add("All Notes", VaadinIcons.NOTEBOOK, AllNotesView.class)
@@ -127,5 +124,36 @@ public class MainView {
 			LogOutEvent logOutEvent = new LogOutEvent();
 			eventBus.publish(this, logOutEvent);
 		});
+	}
+	
+	private void subscribeUserLoginEvent() {
+		eventBus.subscribe(new EventBusListener<LogInEvent>() {
+
+			private static final long serialVersionUID = -8759443031294768607L;
+
+			@Override
+			public void onEvent(Event<LogInEvent> event) {
+				fillCurrentUserData();	
+			}
+		});
+	}
+	
+	private void fillCurrentUserData() {
+		MenuHeader menuHeader = new MenuHeader("Hello " + userSerivce.getCurrentUser().getfName() + "!",
+				new ThemeResource("logo.png"));
+		menuHeaderLayout.removeAllComponents();
+		menuHeaderLayout.addComponent(menuHeader);
+		
+		notifications.clearNotifications();
+		
+		for (BellNotification notification : userSerivce.getCurrentUser().getNotifications()) {
+			String title = notification.getTitle();
+			String description = notification.getDescription();
+			int id = notification.getId();
+
+			BellDefaultNotification defaultNotification = new BellDefaultNotification(title, description, id);
+
+			notifications.addNotification(defaultNotification);
+		}
 	}
 }
