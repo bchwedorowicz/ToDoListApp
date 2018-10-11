@@ -10,8 +10,6 @@ import org.vaadin.spring.events.EventBus.UIEventBus;
 
 import com.github.appreciated.app.layout.annotations.MenuCaption;
 import com.github.appreciated.app.layout.annotations.MenuIcon;
-import com.github.appreciated.app.layout.builder.entities.DefaultNotification;
-import com.github.appreciated.app.layout.builder.entities.DefaultNotificationHolder;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -31,15 +29,19 @@ import pl.beata.todolist.components.SharedContactsComponent;
 import pl.beata.todolist.components.TaskComponent;
 import pl.beata.todolist.dao.NoteDao;
 import pl.beata.todolist.dao.NotificationDao;
-import pl.beata.todolist.dao.TaskDao;
 import pl.beata.todolist.event.CloseDeleteWindowEvent;
 import pl.beata.todolist.event.DeleteNoteEvent;
-import pl.beata.todolist.model.Note;
 import pl.beata.todolist.model.BellNotification;
+import pl.beata.todolist.model.Note;
 import pl.beata.todolist.model.Task;
 import pl.beata.todolist.model.User;
 import pl.beata.todolist.service.UserService;
 
+/**
+ * 
+ * Represents view where current user can edit note.
+ *
+ */
 @SpringView(name = "note")
 @MenuCaption("Add New Note")
 @MenuIcon(VaadinIcons.PLUS_CIRCLE_O)
@@ -47,6 +49,7 @@ import pl.beata.todolist.service.UserService;
 @UIScope
 public class EditNoteView extends Panel implements View {
 
+	private static final long serialVersionUID = -8234776256912002557L;
 	private Label owner = new Label();
 	private TextField noteName = new TextField("Note Name");
 	private List<TaskComponent> tasksList = new ArrayList<>();
@@ -57,18 +60,16 @@ public class EditNoteView extends Panel implements View {
 	private Note note;
 	private UserService userService;
 	private NoteDao noteDao;
-	private TaskDao taskDao;
 	private NotificationDao notificationDao;
 	private DeleteNoteView deleteNoteView;
 	private UIEventBus eventBus;
 	private SharedContactsComponent sharedContacts;
 
 	@Autowired
-	public EditNoteView(UserService userService, NoteDao noteDao, TaskDao taskDao, DeleteNoteView deleteNoteView,
-			UIEventBus eventBus, SharedContactsComponent sharedContacts, NotificationDao notificationDao) {
+	public EditNoteView(UserService userService, NoteDao noteDao, DeleteNoteView deleteNoteView, UIEventBus eventBus,
+			SharedContactsComponent sharedContacts, NotificationDao notificationDao) {
 		this.userService = userService;
 		this.noteDao = noteDao;
-		this.taskDao = taskDao;
 		this.deleteNoteView = deleteNoteView;
 		this.eventBus = eventBus;
 		this.sharedContacts = sharedContacts;
@@ -90,7 +91,7 @@ public class EditNoteView extends Panel implements View {
 	@Transactional
 	public void enter(ViewChangeListener.ViewChangeEvent event) {
 		String params = event.getParameters();
-		sharedContacts.setSharedContacts(userService.getCurrentUser().getContacts());
+		sharedContacts.setContacts(userService.getCurrentUser().getContacts());
 		if (params == null || params.equals("")) {
 			note = new Note();
 		} else {
@@ -153,7 +154,7 @@ public class EditNoteView extends Panel implements View {
 			MyUI.getCurrent().addWindow(deleteNoteView);
 			deleteNoteView.center();
 			deleteNoteView.setModal(true);
-			deleteNoteView.setWidth(13, UNITS_CM);
+			deleteNoteView.setWidth(13, Unit.CM);
 		});
 	}
 
@@ -174,16 +175,17 @@ public class EditNoteView extends Panel implements View {
 	private void saveNoteToSharedUsers() {
 		Set<User> sharedUsers = sharedContacts.getSharedUsers();
 		note.setCoOwners(sharedUsers);
-		
-			BellNotification notification = new BellNotification();
-			notification.setTitle("New Note");
-			notification.setDescription("New note from " + userService.getCurrentUser().getfName() + userService.getCurrentUser().getlName());
-			
-			for (User user: sharedUsers) {
-				notification.setUser(user);	
-			}
-			
-			notificationDao.create(notification);
-			
+
+		BellNotification notification = new BellNotification();
+		notification.setTitle("New Note");
+		notification.setDescription(
+				"New note from " + userService.getCurrentUser().getfName() + userService.getCurrentUser().getlName());
+
+		for (User user : sharedUsers) {
+			notification.setUser(user);
+		}
+
+		notificationDao.create(notification);
+
 	}
 }

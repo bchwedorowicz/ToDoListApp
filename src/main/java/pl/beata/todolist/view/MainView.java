@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.vaadin.spring.events.EventBusListener;
 import org.vaadin.spring.events.Event;
 import org.vaadin.spring.events.EventBus.UIEventBus;
+import org.vaadin.spring.events.EventBusListener;
 
 import com.github.appreciated.app.layout.AppLayout;
 import com.github.appreciated.app.layout.behaviour.AppLayoutComponent;
@@ -32,13 +32,17 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.VerticalLayout;
 
 import pl.beata.todolist.dao.NotificationDao;
-import pl.beata.todolist.dao.UserDao;
-import pl.beata.todolist.event.LogOutEvent;
 import pl.beata.todolist.event.LogInEvent;
+import pl.beata.todolist.event.LogOutEvent;
 import pl.beata.todolist.model.BellNotification;
 import pl.beata.todolist.notification.BellDefaultNotification;
 import pl.beata.todolist.service.UserService;
 
+/**
+ * 
+ * Represents main view, with menu and appbar.
+ *
+ */
 @SpringComponent
 @UIScope
 @Lazy
@@ -51,7 +55,6 @@ public class MainView {
 	private AppLayoutComponent appLayoutComponent;
 	private Button logOutBtn = new Button("Log out");
 	private UIEventBus eventBus;
-	private UserDao userDao;
 	private NotificationDao notificationDao;
 	private DefaultNotificationHolder notifications;
 
@@ -79,11 +82,11 @@ public class MainView {
 		notifications.addStatusListener(new NotificationListener() {
 
 			@Override
-			public void onUnreadCountChange(NotificationHolder holder) {
+			public void onUnreadCountChange(@SuppressWarnings("rawtypes") NotificationHolder holder) {
 			}
 
 			@Override
-			public void onNotificationChanges(NotificationHolder newStatus) {
+			public void onNotificationChanges(@SuppressWarnings("rawtypes") NotificationHolder newStatus) {
 				List<DefaultNotification> allNotifications = notifications.getNotifications();
 				for (DefaultNotification defaultNotification : allNotifications) {
 					if (!defaultNotification.isUnnread()) {

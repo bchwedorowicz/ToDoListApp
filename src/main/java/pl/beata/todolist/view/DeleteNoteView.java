@@ -20,10 +20,16 @@ import pl.beata.todolist.event.CloseDeleteWindowEvent;
 import pl.beata.todolist.event.DeleteNoteEvent;
 import pl.beata.todolist.model.Note;
 
+/**
+ * 
+ * Represents modal window, where current user can delete note.
+ *
+ */
 @SpringComponent
 @UIScope
 public class DeleteNoteView extends Window {
 
+	private static final long serialVersionUID = 3638461052433718084L;
 	private Label question = new Label("Are you sure you want to delete this note?");
 	private Button yesBtn = new Button("Yes");
 	private Button noBtn = new Button("No");
@@ -43,16 +49,26 @@ public class DeleteNoteView extends Window {
 		subscribeCloseDeleteWindowEvent();
 	}
 
+	/**
+	 * 
+	 * Gets button "Yes".
+	 */
 	public Button getYesBtn() {
 		return yesBtn;
 	}
 
+	/**
+	 * 
+	 * Gets button "No".
+	 */
 	public Button getNoBtn() {
 		return noBtn;
 	}
 
 	private void subscribeDeleteNoteEvent() {
 		eventBus.subscribe(new EventBusListener<DeleteNoteEvent>() {
+
+			private static final long serialVersionUID = 6485947345009570402L;
 
 			@Override
 			public void onEvent(org.vaadin.spring.events.Event<DeleteNoteEvent> event) {
@@ -68,6 +84,8 @@ public class DeleteNoteView extends Window {
 
 	private void subscribeCloseDeleteWindowEvent() {
 		eventBus.subscribe(new EventBusListener<CloseDeleteWindowEvent>() {
+
+			private static final long serialVersionUID = -2223375161420976308L;
 
 			@Override
 			public void onEvent(org.vaadin.spring.events.Event<CloseDeleteWindowEvent> event) {

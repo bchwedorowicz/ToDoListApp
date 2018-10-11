@@ -1,39 +1,42 @@
 package pl.beata.todolist.uploader;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.StreamResource.StreamSource;
-import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Upload;
 
 import pl.beata.todolist.streamResource.ByteArrayStreamResource;
 
+/**
+ * 
+ * Component to upload photo.
+ */
 public class PhotoUploader extends Panel {
 
-	private Upload upload;
+	private static final long serialVersionUID = 6665873457125702962L;
 	private byte[] bytes;
 
 	public PhotoUploader(Upload upload) {
-		this.upload = upload;
 
-		// Create upload stream
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(); // Stream to write to
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		upload.setReceiver(new Upload.Receiver() {
+
+			private static final long serialVersionUID = 1099236069066034351L;
+
 			@Override
 			public OutputStream receiveUpload(String filename, String mimeType) {
 				baos.reset();
-				return baos; // Return the output stream to write to
+				return baos;
 			}
 		});
 
 		upload.addSucceededListener(new Upload.SucceededListener() {
+
+			private static final long serialVersionUID = -3584913197238413126L;
+
 			@Override
 			public void uploadSucceeded(Upload.SucceededEvent succeededEvent) {
 
@@ -46,6 +49,12 @@ public class PhotoUploader extends Panel {
 		return bytes;
 	}
 
+	/**
+	 * Displays user photo.
+	 * 
+	 * @param photoByte photo.
+	 * 
+	 */
 	public void showPhoto(byte[] photoByte) {
 		Image image = new Image();
 		image.setHeight(9, Unit.CM);

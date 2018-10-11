@@ -1,6 +1,7 @@
 package pl.beata.todolist.view;
 
 import java.util.HashSet;
+
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,11 @@ import pl.beata.todolist.model.User;
 import pl.beata.todolist.service.UserService;
 import pl.beata.todolist.streamResource.Base64StreamResource;
 
+/**
+ * 
+ * View with current users contacts.
+ *
+ */
 @SpringView(name = "contacts")
 @MenuCaption("Contacts")
 @MenuIcon(VaadinIcons.USERS)
@@ -37,6 +43,7 @@ import pl.beata.todolist.streamResource.Base64StreamResource;
 @UIScope
 public class ContactsView extends VerticalLayout implements View {
 
+	private static final long serialVersionUID = 6217444886565508004L;
 	private Button addBtn = new Button("Add new contact");
 	private Button deleteBtn = new Button("Delete contact");
 	private Grid<User> usersGrid = new Grid<>();
@@ -87,7 +94,7 @@ public class ContactsView extends VerticalLayout implements View {
 	private void createAddContactBtnListener() {
 		newContactView.getAddContactBtn().addClickListener(event -> {
 			try {
-				userService.setContact(newContactView.getEmailValue());
+				userService.addContact(newContactView.getEmailValue());
 				showContactsInGrid();
 				MyUI.getCurrent().removeWindow(popup);
 			} catch (ValidationException e) {

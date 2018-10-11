@@ -19,6 +19,11 @@ import pl.beata.todolist.form.LogInForm;
 import pl.beata.todolist.service.UserService;
 import pl.beata.todolist.view.MainView;
 
+/**
+ * 
+ * Application entry point.
+ *
+ */
 @Push
 @PushStateNavigation
 @SpringUI
@@ -27,6 +32,7 @@ import pl.beata.todolist.view.MainView;
 @Title("App Layout Demo")
 public class MyUI extends UI {
 
+	private static final long serialVersionUID = -7593548011872840617L;
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -51,6 +57,8 @@ public class MyUI extends UI {
 	private void subscribeUserLoginEvent() {
 		EventBusListener<LogInEvent> listener = new EventBusListener<LogInEvent>() {
 
+			private static final long serialVersionUID = -5219711133832202346L;
+
 			@Override
 			public void onEvent(org.vaadin.spring.events.Event<LogInEvent> event) {
 				setContent(mainView.getAppLayoutComponent());
@@ -63,6 +71,8 @@ public class MyUI extends UI {
 	
 	private void subscribeLogOutBtnEvent() {
 		eventBus.subscribe(new EventBusListener<LogOutEvent>() {
+
+			private static final long serialVersionUID = -7124026081815657010L;
 
 			@Override
 			public void onEvent(org.vaadin.spring.events.Event<LogOutEvent> event) {

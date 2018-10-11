@@ -14,6 +14,8 @@ import com.vaadin.server.ExternalResource;
 
 public class Base64StreamResource extends ExternalResource {
 
+	private static final long serialVersionUID = -6424280306708306932L;
+
 	public Base64StreamResource(byte[] photo, int width, int height) {
 		super("data:image/png;base64," + Base64.getEncoder().encodeToString(resizeImage(photo, width, height)));
 	}

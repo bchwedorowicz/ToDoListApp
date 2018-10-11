@@ -22,10 +22,16 @@ import pl.beata.todolist.event.UserRegisteredEvent;
 import pl.beata.todolist.model.User;
 import pl.beata.todolist.service.UserService;
 
+/**
+ * 
+ * Component with login form.
+ *
+ */
 @SpringComponent
 @UIScope
 public class LogInForm extends VerticalLayout {
 
+	private static final long serialVersionUID = 3771111131497668817L;
 	private TextField email = new TextField("Email");
 	private PasswordField password = new PasswordField("Password");
 	private Button loginBtn = new Button("Login");
@@ -39,8 +45,8 @@ public class LogInForm extends VerticalLayout {
 	public LogInForm(RegistrationForm registrationForm, UserService userService, UIEventBus eventBus) {
 		this.userService = userService;
 		this.eventBus = eventBus;
-		email.setWidth(7, UNITS_CM);
-		password.setWidth(7, UNITS_CM);
+		email.setWidth(7, Unit.CM);
+		password.setWidth(7, Unit.CM);
 		addComponents(email, password, loginBtn, createRegistrationLayout());
 		this.setComponentAlignment(email, Alignment.MIDDLE_CENTER);
 		this.setComponentAlignment(password, Alignment.MIDDLE_CENTER);
@@ -48,8 +54,8 @@ public class LogInForm extends VerticalLayout {
 		this.setComponentAlignment(registrationLayout, Alignment.MIDDLE_CENTER);
 		popup = new Window("Registration", registrationForm);
 		popup.setModal(true);
-		popup.setHeight(15, UNITS_CM);
-		popup.setWidth(10, UNITS_CM);
+		popup.setHeight(15, Unit.CM);
+		popup.setWidth(10, Unit.CM);
 		popup.setResponsive(true);
 		email.setValue("asia.pipiszka@gmail.com");
 		password.setValue("a");
@@ -83,6 +89,8 @@ public class LogInForm extends VerticalLayout {
 
 	private void subscribeUserRegistrationEvent() {
 		eventBus.subscribe(new EventBusListener<UserRegisteredEvent>() {
+
+			private static final long serialVersionUID = 2582448443266161526L;
 
 			@Override
 			public void onEvent(org.vaadin.spring.events.Event<UserRegisteredEvent> event) {

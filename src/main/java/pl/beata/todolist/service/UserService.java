@@ -11,7 +11,7 @@ public interface UserService {
 	boolean login(String email, String password);
 	void register(User user) throws ValidationException;
 	User getCurrentUser();
-	void setContact(String contactEmail) throws ValidationException;
+	void addContact(String contactEmail) throws ValidationException;
 	void deleteContact(Set<String> contactsEmails);
 	void logout();
 

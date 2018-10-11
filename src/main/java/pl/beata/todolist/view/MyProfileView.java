@@ -14,7 +14,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
@@ -25,6 +24,11 @@ import pl.beata.todolist.model.User;
 import pl.beata.todolist.service.UserService;
 import pl.beata.todolist.uploader.PhotoUploader;
 
+/**
+ * 
+ * Represents view with current user data.
+ *
+ */
 @SpringView(name = "myProfile")
 @MenuCaption("My Profile")
 @MenuIcon(VaadinIcons.USER)
@@ -32,6 +36,7 @@ import pl.beata.todolist.uploader.PhotoUploader;
 @UIScope
 public class MyProfileView extends FormLayout implements View {
 
+	private static final long serialVersionUID = -4693929681119337774L;
 	private PhotoUploader photoUploader;
 	private Upload addEditPhotoBtn = new Upload();
 	private Button deletePhotoBtn = new Button("Delete Photo");
@@ -44,7 +49,6 @@ public class MyProfileView extends FormLayout implements View {
 	private UserService userService;
 	private UserDao userDao;
 	private User updatedUser;
-	
 
 	@Autowired
 	public MyProfileView(UserService userService, UserDao userDao) {
@@ -88,6 +92,9 @@ public class MyProfileView extends FormLayout implements View {
 		});
 	}
 
+	/**
+	 * Save current state to database.
+	 */
 	public void updateUser() {
 		updatedUser.setfName(fName.getValue());
 		updatedUser.setlName(lName.getValue());
@@ -98,13 +105,12 @@ public class MyProfileView extends FormLayout implements View {
 		}
 		userDao.update(updatedUser);
 	}
-	
-	
+
 	private void deletePhoto() {
-		deletePhotoBtn.addClickListener(event ->{
+		deletePhotoBtn.addClickListener(event -> {
 			updatedUser.setPhoto(null);
 			photoUploader.showPhoto(null);
 		});
 	}
-	
+
 }

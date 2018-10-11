@@ -12,18 +12,27 @@ import com.vaadin.spring.annotation.SpringView;
 import pl.beata.todolist.model.Note;
 import pl.beata.todolist.service.UserService;
 
+/**
+ * 
+ * Represents all notes view: 
+ * notes from current user shared to other contacts, 
+ * notes shared from other contacts to current user
+ * and user's private notes.
+ *
+ */
 @SpringView(name = "allNotes")
 @MenuCaption("All Notes")
 @MenuIcon(VaadinIcons.NOTEBOOK)
 public class AllNotesView extends AbstractNotesView {
-	
+
+	private static final long serialVersionUID = 3800298948637628510L;
 	private UserService userService;
 
 	@Autowired
 	public AllNotesView(UserService userService) {
 		super(userService);
-		this.userService = userService;		
-		
+		this.userService = userService;
+
 	}
 
 	@Override
@@ -32,7 +41,5 @@ public class AllNotesView extends AbstractNotesView {
 		allNotes.addAll(userService.getCurrentUser().getSharedNotes());
 		return allNotes;
 	}
-	
-	
 
 }

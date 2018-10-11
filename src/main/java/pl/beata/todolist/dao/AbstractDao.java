@@ -1,14 +1,17 @@
 package pl.beata.todolist.dao;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import pl.beata.todolist.model.User;
-
+/**
+ * 
+ * Base class to all daos.
+ *
+ * @param <T>
+ *            Entity type for which dao should work.
+ */
 public abstract class AbstractDao<T> implements Dao<T> {
 
 	@PersistenceContext
@@ -41,5 +44,5 @@ public abstract class AbstractDao<T> implements Dao<T> {
 	public void delete(T entity) {
 		em.remove(em.contains(entity) ? entity : em.merge(entity));
 	}
-	
+
 }

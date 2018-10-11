@@ -1,6 +1,7 @@
 package pl.beata.todolist.components;
 
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Set;
 
@@ -15,8 +16,14 @@ import pl.beata.todolist.model.Note;
 import pl.beata.todolist.model.Task;
 import pl.beata.todolist.model.User;
 
+/**
+ * 
+ * Component displaying single note.
+ *
+ */
 public class NoteComponent extends Panel {
 
+	private static final long serialVersionUID = -7774631785217460548L;
 	private VerticalLayout tasksLayout = new VerticalLayout();
 
 	public NoteComponent(Note note, VaadinIcons icon) {

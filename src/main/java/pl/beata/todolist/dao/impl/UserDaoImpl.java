@@ -15,7 +15,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
 	public UserDaoImpl() {
 		super(User.class);
 	}
-
+	
 	@Override
 	public User findUserByEmail(String userEmail) {
 		TypedQuery<User> query = em.createQuery("SELECT u FROM User AS u WHERE u.email = :userEmail", User.class);

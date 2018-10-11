@@ -12,11 +12,17 @@ import com.vaadin.spring.annotation.SpringView;
 import pl.beata.todolist.model.Note;
 import pl.beata.todolist.service.UserService;
 
+/**
+ * 
+ * Represents view of notes form others, shared to current user.
+ *
+ */
 @SpringView(name = "othersNotes")
 @MenuCaption("Others Notes")
 @MenuIcon(VaadinIcons.CLIPBOARD_USER)
 public class OthersNotesView extends AbstractNotesView {
-	
+
+	private static final long serialVersionUID = -7720954033873309032L;
 	private UserService userService;
 
 	@Autowired

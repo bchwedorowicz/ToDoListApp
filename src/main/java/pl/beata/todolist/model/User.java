@@ -12,10 +12,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import com.github.appreciated.app.layout.builder.entities.DefaultNotification;
-import com.github.appreciated.app.layout.builder.entities.DefaultNotificationHolder;
-import com.github.appreciated.app.layout.builder.entities.NotificationHolder;
-
 @Entity
 public class User {
 
@@ -36,10 +32,10 @@ public class User {
 
 	@OneToMany(mappedBy = "owner")
 	private List<Note> notes;
-	
+
 	@ManyToMany(mappedBy = "coOwners")
 	private List<Note> sharedNotes;
-	
+
 	@OneToMany(mappedBy = "user")
 	private List<BellNotification> notifications;
 
@@ -106,7 +102,7 @@ public class User {
 	public void setContacts(Set<User> contacts) {
 		this.contacts = contacts;
 	}
-	
+
 	public Note getNote(String noteName) {
 		Note currentNote = null;
 		for (Note note : notes) {
@@ -116,14 +112,13 @@ public class User {
 		}
 		return currentNote;
 	}
-	
+
 	public List<Note> getSharedNotes() {
 		return sharedNotes;
 	}
-	
+
 	public List<BellNotification> getNotifications() {
 		return notifications;
 	}
-	
-	
+
 }

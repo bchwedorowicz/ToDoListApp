@@ -25,17 +25,29 @@ public class UserServiceImpl implements UserService {
 		this.sessionService = sessionService;
 	}
 
+	/**
+	 * Returns true if user is logged in.
+	 */
 	@Override
 	public boolean isUserLoggedIn() {
 		return sessionService.getCurrentUserId() != null;
 	}
 
+	/**
+	 * Returns true if email and password are correct. Sets user to session, if
+	 * email and password is correct.
+	 * 
+	 * @param email
+	 *            to login.
+	 * @param password
+	 *            to login.
+	 */
 	@Override
 	public boolean login(String email, String password) {
 		User user = userDao.findUserByEmail(email);
 		boolean isPasswordCorrect = user != null && password.equals(user.getPassword());
 		if (isPasswordCorrect) {
-			saveUserToSession(user);			
+			saveUserToSession(user);
 		}
 		return isPasswordCorrect;
 	}
@@ -44,12 +56,24 @@ public class UserServiceImpl implements UserService {
 		int userId = user.getId();
 		sessionService.setCurrentUserId(userId);
 	}
-	
+
+	/**
+	 * Logs out the user.
+	 */
 	@Override
 	public void logout() {
 		sessionService.setCurrentUserId(null);
 	}
 
+	/**
+	 * Registers the user by adding user entity to database. Validates if given user
+	 * can be registered.
+	 * 
+	 * @param user
+	 *            to register.
+	 * @throws ValidationException
+	 *             if given user can not be registered.
+	 */
 	@Override
 	public void register(User user) throws ValidationException {
 		if (user.getEmail() == null) {
@@ -65,14 +89,23 @@ public class UserServiceImpl implements UserService {
 		userDao.create(user);
 	}
 
+	/**
+	 * Returns currently logged user.
+	 */
 	@Override
 	public User getCurrentUser() {
 		int id = sessionService.getCurrentUserId();
 		return userDao.findById(id);
 	}
-	
+
+	/**
+	 * Adds new contact to contacts of currently logged user.
+	 * 
+	 * @param contactEmail
+	 *            contact email to add.
+	 */
 	@Transactional
-	public void setContact(String contactEmail) throws ValidationException {
+	public void addContact(String contactEmail) throws ValidationException {
 		User contact = userDao.findUserByEmail(contactEmail);
 		User currentUser = getCurrentUser();
 		if (currentUser.equals(contact)) {
@@ -86,7 +119,13 @@ public class UserServiceImpl implements UserService {
 		}
 		currentUser.getContacts().add(contact);
 	}
-	
+
+	/**
+	 * Delete contact form contacts of currently logged user.
+	 * 
+	 * @param contactsEmails
+	 *            contacts emails to delete.
+	 */
 	@Transactional
 	public void deleteContact(Set<String> contactsEmails) {
 		Set<User> contacts = new HashSet<>();
