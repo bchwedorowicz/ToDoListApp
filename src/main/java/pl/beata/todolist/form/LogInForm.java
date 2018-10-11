@@ -57,8 +57,6 @@ public class LogInForm extends VerticalLayout {
 		popup.setHeight(15, Unit.CM);
 		popup.setWidth(10, Unit.CM);
 		popup.setResponsive(true);
-		email.setValue("asia.pipiszka@gmail.com");
-		password.setValue("a");
 		openRegistrationWindowListener();
 		addLoginButtonListener();
 		subscribeUserRegistrationEvent();

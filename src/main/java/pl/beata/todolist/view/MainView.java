@@ -107,10 +107,7 @@ public class MainView {
 				.withViewProvider(() -> viewProvider)
 				.withNavigationElementInfoProducer(new DefaultSpringNavigationElementInfoProducer())
 				.withTitle("TO DO LIST APP").addToAppBar(logOutBtn).addToAppBar(bell)
-				.withDesign(AppLayoutDesign.MATERIAL).withNavigatorConsumer(navigator -> {
-					/* Do something with it */})
-				.withNavigatorConsumer(navigator -> {
-					/* Do something with it */})
+				.withDesign(AppLayoutDesign.MATERIAL)
 				.add(menuHeaderLayout, Section.HEADER).add("Add New Note", VaadinIcons.PLUS_CIRCLE_O, EditNoteView.class)
 				.add("My Profile", VaadinIcons.USER, MyProfileView.class)
 				.add(SubmenuBuilder.get("Notes", VaadinIcons.NOTEBOOK)

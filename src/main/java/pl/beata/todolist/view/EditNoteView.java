@@ -179,7 +179,7 @@ public class EditNoteView extends Panel implements View {
 		BellNotification notification = new BellNotification();
 		notification.setTitle("New Note");
 		notification.setDescription(
-				"New note from " + userService.getCurrentUser().getfName() + userService.getCurrentUser().getlName());
+				"New note from " + userService.getCurrentUser().getfName() + " " + userService.getCurrentUser().getlName());
 
 		for (User user : sharedUsers) {
 			notification.setUser(user);
