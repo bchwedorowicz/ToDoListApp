@@ -82,11 +82,11 @@ public class MainView {
 		notifications.addStatusListener(new NotificationListener() {
 
 			@Override
-			public void onUnreadCountChange(@SuppressWarnings("rawtypes") NotificationHolder holder) {
+			public void onUnreadCountChange(NotificationHolder holder) {
 			}
 
 			@Override
-			public void onNotificationChanges(@SuppressWarnings("rawtypes") NotificationHolder newStatus) {
+			public void onNotificationChanges(NotificationHolder newStatus) {
 				List<DefaultNotification> allNotifications = notifications.getNotifications();
 				for (DefaultNotification defaultNotification : allNotifications) {
 					if (!defaultNotification.isUnnread()) {

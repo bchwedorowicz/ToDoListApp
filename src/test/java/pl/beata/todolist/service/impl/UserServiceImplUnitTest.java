@@ -40,14 +40,15 @@ public class UserServiceImplUnitTest {
 		Mockito.when(userDao.findUserByEmail(email)).thenReturn(user);
 
 		// when
-		boolean actualUser = userService.login(email, password);
+		boolean loginSuccessful = userService.login(email, password);
 
 		// then
 		ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
 		Mockito.verify(sessionService).setCurrentUserId(captor.capture());
+		Integer currentUserId = captor.getValue();
 
-		Assert.assertEquals(true, actualUser);
-		Assert.assertEquals(id, captor.getValue());
+		Assert.assertEquals(true, loginSuccessful);
+		Assert.assertEquals(id, currentUserId);
 	}
 
 	@Test
@@ -64,13 +65,13 @@ public class UserServiceImplUnitTest {
 
 		// when
 
-		boolean actualUser = userService.login(email, wrongPassword);
+		boolean loginSuccessful = userService.login(email, wrongPassword);
 
 		// then
 
 		Mockito.verify(sessionService, Mockito.never()).setCurrentUserId(Mockito.any());
 
-		Assert.assertEquals(false, actualUser);
+		Assert.assertEquals(false, loginSuccessful);
 	}
 
 	@Test
@@ -83,12 +84,12 @@ public class UserServiceImplUnitTest {
 
 		// when
 
-		boolean actualUser = userService.login(email, password);
+		boolean loginSuccessful = userService.login(email, password);
 		// then
 
 		Mockito.verify(sessionService, Mockito.never()).setCurrentUserId(Mockito.any());
 
-		Assert.assertEquals(false, actualUser);
+		Assert.assertEquals(false, loginSuccessful);
 	}
 
 }

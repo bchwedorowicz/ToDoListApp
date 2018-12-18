@@ -29,7 +29,7 @@ import pl.beata.todolist.view.MainView;
 @SpringUI
 @Viewport("width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
 @Theme("demo")
-@Title("App Layout Demo")
+@Title("ToDoList")
 public class MyUI extends UI {
 
 	private static final long serialVersionUID = -7593548011872840617L;
